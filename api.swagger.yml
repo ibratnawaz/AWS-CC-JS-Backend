@@ -1,0 +1,49 @@
+openapi: 3.0.1
+info:
+  title: defaultTitle
+  description: defaultDescription
+  version: '1.0'
+servers:
+  - url: https://0buisvy06l.execute-api.ap-south-1.amazonaws.com
+  - url: https://de4bhhl5n0.execute-api.ap-south-1.amazonaws.com
+paths:
+  /products/7567ec4b-b10c-48c5-9345-fc73c48dfe34r:
+    get:
+      description: Auto generated using Swagger Inspector
+      responses:
+        '404':
+          description: Auto generated using Swagger Inspector
+          content:
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+              examples: {}
+      servers:
+        - url: https://de4bhhl5n0.execute-api.ap-south-1.amazonaws.com
+    servers:
+      - url: https://de4bhhl5n0.execute-api.ap-south-1.amazonaws.com
+  /products/7567ec4b-b10c-48c5-9345-fc73c48a80aa:
+    get:
+      description: Auto generated using Swagger Inspector
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+              examples: {}
+      servers:
+        - url: https://de4bhhl5n0.execute-api.ap-south-1.amazonaws.com
+    servers:
+      - url: https://de4bhhl5n0.execute-api.ap-south-1.amazonaws.com
+  /products:
+    get:
+      description: Auto generated using Swagger Inspector
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+      servers:
+        - url: https://0buisvy06l.execute-api.ap-south-1.amazonaws.com
+    servers:
+      - url: https://0buisvy06l.execute-api.ap-south-1.amazonaws.com
