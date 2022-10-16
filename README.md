@@ -1,4 +1,5 @@
 ### API details
+base url: https://qlb8qzz86f.execute-api.ap-south-1.amazonaws.com
 |End-point|Method|Description|
 |:--------|:-----|:----------|
 |/create-tables|GET|Drop all tables and re-create it|
