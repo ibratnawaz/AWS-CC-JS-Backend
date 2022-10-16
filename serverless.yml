@@ -1,14 +1,66 @@
-service: aws-node-http-api-project
+service: products-service
 frameworkVersion: '3'
 
 provider:
   name: aws
   runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  region: ap-south-1
+  stage: dev
+  memorySize: 256
+  vpc:
+    securityGroupIds:
+      - !Ref LambdaSecurityGroup
+    subnetIds:
+      - !Ref SubnetAPrivate
+      - !Ref SubnetBPrivate
+  environment:
+    NODE_ENV: ${opt:stage, 'dev'}
+    DB_NAME: ${self:custom.DB_NAME}
+    DB_USER: ${self:custom.DB_USERNAME}
+    DB_PASS: ${self:custom.DB_PASSWORD}
+    DB_PORT: ${self:custom.DB_PORT}
+
+custom:
+  DB_NAME: ${env: DB_NAME}
+  DB_USERNAME: ${env: DB_USER}
+  DB_PASSWORD: ${env: DB_PASSWORD}
+  DB_PORT: !GetAtt RDSInstance.Endpoint.Port
+  VPC_CIDR: 10
 
 functions:
-  hello:
-    handler: handler.hello
+  createTablesInDB:
+    handler: handlers/createTables.createTablesInDB
     events:
       - httpApi:
-          path: /
+          path: /create-tables
           method: get
+  insertFakeProductsInDB:
+    handler: handlers/dbSeeder.insertFakeItemsInDB
+    events:
+      - httpApi:
+          path: /db-seed
+          method: get
+  products:
+    handler: handlers/products.getProductsList
+    events:
+      - httpApi:
+          path: /products
+          method: get
+  createNewProduct:
+    handler: handlers/addNewProduct.createProduct
+    events:
+      - httpApi:
+          path: /products/create
+          method: post
+  productById:
+    handler: handlers/productById.getProductsById
+    events:
+      - httpApi:
+          path: /products/{id}
+          method: get
+
+resources:
+  - ${file(resources/VpcResources.yml)}
+  - ${file(resources/RoutingResources.yml)}
+  - ${file(resources/RdsResources.yml)}
