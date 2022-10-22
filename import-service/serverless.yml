@@ -16,8 +16,14 @@ provider:
 
 functions:
   uploadExcelFile:
-    handler: handler/handler.importProductsFile
+    handler: handlers/handler.importProductsFile
     events:
       - httpApi:
-          path: /import
+          path: /import/{filename}
+          method: put
+  parseExcelFile:
+    handler: handlers/handler.importFileParser
+    events:
+      - httpApi:
+          path: /parse
           method: post
