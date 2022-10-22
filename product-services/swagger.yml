@@ -1,0 +1,100 @@
+openapi: 3.0.1
+info:
+  title: defaultTitle
+  description: defaultDescription
+  version: 1.0.0-oas3
+servers:
+  - url: https://qlb8qzz86f.execute-api.ap-south-1.amazonaws.com
+paths:
+  /products/create:
+    post:
+      description: Auto generated using Swagger Inspector
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                thumbnail:
+                  type: string
+                price:
+                  type: integer
+                count:
+                  type: integer
+                description:
+                  type: string
+                title:
+                  type: string
+            examples:
+              '0':
+                value: "{\r\n    \"title\": \"Huawei P30\",\r\n    \"description\": \"Huawei's re-badged P30 Pro New Edition was officially unveiled yesterday in Germany and now the device has made its way to the UK.\",\r\n    \"price\": 499,\r\n    \"count\": 12,\r\n    \"thumbnail\": \"https://dummyjson.com/image/i/products/5/thumbnail.jpg\"\r\n  }"
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+              examples: {}
+      servers:
+        - url: https://qlb8qzz86f.execute-api.ap-south-1.amazonaws.com
+    servers:
+      - url: https://qlb8qzz86f.execute-api.ap-south-1.amazonaws.com
+  /products/5d26ceb0-a596-499b-8566-fd76:
+    get:
+      description: Auto generated using Swagger Inspector
+      responses:
+        '404':
+          description: Auto generated using Swagger Inspector
+          content:
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+              examples:
+                '0':
+                  value: "{\r\n    \"message\": \"Product not found!\" \r\n  }"
+      servers:
+        - url: https://qlb8qzz86f.execute-api.ap-south-1.amazonaws.com
+    servers:
+      - url: https://qlb8qzz86f.execute-api.ap-south-1.amazonaws.com
+  /products/5d26ceb0-a596-499b-8566-fd7652b81b48:
+    get:
+      description: Auto generated using Swagger Inspector
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+              examples:
+                '0':
+                  value: "{\r\n    \"id\": \"aa87e337-0d38-4a07-921f-24e28c9c914f\",\r\n    \"title\": \"Huawei P30\",\r\n    \"description\": \"Huawei's re-badged P30 Pro New Edition was officially unveiled yesterday in Germany and now the device has made its way to the UK.\",\r\n    \"price\": 499,\r\n    \"count\": 12,\r\n    \"thumbnail\": \"https://dummyjson.com/image/i/products/5/thumbnail.jpg\"\r\n  }"
+      servers:
+        - url: https://qlb8qzz86f.execute-api.ap-south-1.amazonaws.com
+    servers:
+      - url: https://qlb8qzz86f.execute-api.ap-south-1.amazonaws.com
+  /products:
+    get:
+      description: Auto generated using Swagger Inspector
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            text/plain; charset=utf-8:
+              schema:
+                type: string
+              examples:
+                '0':
+                  value:
+                    "[{\r\n    \"id\": \"aa87e337-0d38-4a07-921f-24e28c9c914f\",\r\n    \"title\": \"Huawei P30\",\r\n    \"description\": \"Huawei's re-badged P30 Pro New Edition was officially unveiled yesterday in Germany and now the device has made its way to the UK.\",\r\n    \"price\": 499,\r\n    \"count\": 12,\r\n    \"thumbnail\": \"https://dummyjson.com/image/i/products/5/thumbnail.jpg\"\r\n  }, \r\n    {\"id\": \"aa87e337-0d38-4a07-921f-24e28c9c9145\"
+                    \r\n    \"title\": \"Huawei P60\"
+                    \r\n    \"description\": \"Huawei's re-badged P60 Pro New Edition was officially unveiled yesterday in Germany and now the device has made its way to the UK.\"
+                    \r\n    \"price\": 499
+                    \r\n    \"count\": 12
+                    \r\n    \"thumbnail\": \"https://dummyjson.com/image/i/products/5/thumbnail.jpg\"\r\n
+                    }]"
+      servers:
+        - url: https://qlb8qzz86f.execute-api.ap-south-1.amazonaws.com
+    servers:
+      - url: https://qlb8qzz86f.execute-api.ap-south-1.amazonaws.com

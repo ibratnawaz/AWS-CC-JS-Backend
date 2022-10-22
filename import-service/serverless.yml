@@ -1,0 +1,23 @@
+service: import-service
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  region: ap-south-1
+  stage: dev
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 's3:*'
+      Resource:
+        - 'arn:aws:s3:::aws-uploaded/*'
+
+functions:
+  uploadExcelFile:
+    handler: handler/handler.importProductsFile
+    events:
+      - httpApi:
+          path: /import
+          method: post
