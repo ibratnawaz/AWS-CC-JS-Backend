@@ -13,7 +13,7 @@ module.exports = {
     if (!fileType.includes('csv')) {
       return {
         statusCode: 405,
-        body: JSON.stringify({ message: 'Only .xlsx file type is allowed!' }),
+        body: JSON.stringify({ message: 'Only .csv file type is allowed!' }),
         headers,
       };
     }
