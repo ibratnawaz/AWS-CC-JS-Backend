@@ -10,8 +10,7 @@ module.exports = {
       'Access-Control-Allow-Credentials': true,
     };
     const fileType = event.headers['content-type'];
-    console.log('>>> file extension', fileType);
-    if (!fileType.includes('spreadsheetml')) {
+    if (!fileType.includes('csv')) {
       return {
         statusCode: 405,
         body: JSON.stringify({ message: 'Only .xlsx file type is allowed!' }),
@@ -20,11 +19,10 @@ module.exports = {
     }
 
     const fileName = event.pathParameters.filename || 'default.xlsx';
-    const decodedFile = Buffer.from(event.body, 'base64');
     const params = {
       Bucket: S3_BuCKET_NAME,
       Key: `uploaded/${fileName}`,
-      Body: decodedFile,
+      Body: event.body,
       ContentType: fileType,
     };
 
@@ -74,8 +72,10 @@ module.exports = {
         Key: key,
       };
 
-      const stream = await s3.getObject(params).createReadStream();
+      const stream = await s3.getObject(params);
+      console.log('>>> csv file', stream);
       stream
+        .createReadStream()
         .pipe(csv())
         .on('data', (data) => {
           console.log('>>> streaming data', data);
