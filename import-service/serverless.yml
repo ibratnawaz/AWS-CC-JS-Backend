@@ -13,6 +13,17 @@ provider:
         - 's3:*'
       Resource:
         - 'arn:aws:s3:::aws-uploaded/*'
+    - Effect: 'Allow'
+      Action: 'sqs:*'
+      Resource:
+        - Fn::GetAtt: [SQSQueue, Arn]
+
+resources:
+  Resources:
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: 'batch-product-queue'
 
 functions:
   uploadExcelFile:
@@ -24,6 +35,18 @@ functions:
   parseExcelFile:
     handler: handlers/handler.importFileParser
     events:
-      - httpApi:
-          path: /parse
-          method: post
+      - s3:
+          bucket: aws-uploaded
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+          existing: true
+  batchProcessing:
+    handler: handlers/handler.batchProcessing
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - SQSQueue
+              - Arn

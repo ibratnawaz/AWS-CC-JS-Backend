@@ -65,19 +65,29 @@ module.exports = {
     };
 
     try {
-      const key = JSON.parse(event.body).key;
+      const key = event.Records[0].s3.object.key;
       const s3 = new AWS.S3({ region: 'ap-south-1' });
+      const sqs = new AWS.SQS();
       const params = {
         Bucket: S3_BuCKET_NAME,
         Key: key,
       };
 
       const stream = await s3.getObject(params);
-      console.log('>>> csv file', stream);
       stream
         .createReadStream()
         .pipe(csv())
         .on('data', (data) => {
+          sqs.sendMessage(
+            {
+              QueueUrl:
+                'https://sqs.ap-south-1.amazonaws.com/087635793636/batch-product-queue',
+              MessageBody: JSON.stringify(data),
+            },
+            (error, data) => {
+              console.log('>>> error=', error, 'data=', data);
+            }
+          );
           console.log('>>> streaming data', data);
         })
         .on('error', (error) => console.log('>>> stream error', error))
@@ -107,5 +117,8 @@ module.exports = {
       ...response,
       headers,
     };
+  },
+  batchProcessing: async (event) => {
+    console.log('>>> data received', JSON.parse(event.Records[0].body));
   },
 };
