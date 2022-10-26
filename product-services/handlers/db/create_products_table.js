@@ -1,17 +1,23 @@
 async function createProductTable(client) {
   await new Promise((resolve, reject) => {
     client.query(
-      'CREATE TABLE products(id VARCHAR(50) NOT NULL, title TEXT(255) NOT NULL, description TEXT(255), price INT, thumbnail TEXT(255), PRIMARY KEY (id))',
-      function (error, results, fields) {
+      `create table products(
+        id uuid not null default uuid_generate_v4() primary key,
+        title text not null,
+        description text,
+        price numeric,
+        thumbnail text
+      )`,
+      function (error) {
         if (error) {
-          console.log('>>> Error', error)
-          reject(error.stack)
+          console.log('>>> Error', error);
+          reject(error);
         }
-        console.log('table products created!')
-        resolve(results)
+        console.log('table products created!');
+        resolve();
       }
-    )
-  })
+    );
+  });
 }
 
-module.exports.createProductTable = createProductTable
+module.exports.createProductTable = createProductTable;

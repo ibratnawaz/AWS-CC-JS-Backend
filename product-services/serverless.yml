@@ -8,12 +8,6 @@ provider:
   region: ap-south-1
   stage: dev
   memorySize: 256
-  vpc:
-    securityGroupIds:
-      - !Ref LambdaSecurityGroup
-    subnetIds:
-      - !Ref SubnetAPrivate
-      - !Ref SubnetBPrivate
   environment:
     NODE_ENV: ${opt:stage, 'dev'}
     DB_NAME: ${self:custom.DB_NAME}
@@ -22,11 +16,10 @@ provider:
     DB_PORT: ${self:custom.DB_PORT}
 
 custom:
-  DB_NAME: ${env: DB_NAME}
-  DB_USERNAME: ${env: DB_USER}
-  DB_PASSWORD: ${env: DB_PASSWORD}
-  DB_PORT: !GetAtt RDSInstance.Endpoint.Port
-  VPC_CIDR: 10
+  DB_NAME: e_commerce_dev
+  DB_USERNAME: postgres
+  DB_PASSWORD: admin123
+  DB_PORT: 5432
 
 functions:
   createTablesInDB:
@@ -59,8 +52,3 @@ functions:
       - httpApi:
           path: /products/{id}
           method: get
-
-resources:
-  - ${file(resources/VpcResources.yml)}
-  - ${file(resources/RoutingResources.yml)}
-  - ${file(resources/RdsResources.yml)}

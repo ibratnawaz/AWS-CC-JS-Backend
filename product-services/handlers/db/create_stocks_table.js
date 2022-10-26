@@ -1,17 +1,21 @@
 async function createStockTable(client) {
   await new Promise((resolve, reject) => {
     client.query(
-      'CREATE TABLE stocks(id VARCHAR(50) NOT NULL, productsId VARCHAR(50) NOT NULL, count INT NOT NULL, PRIMARY KEY (id), FOREIGN KEY (productsId) REFERENCES products(id) ON DELETE CASCADE)',
-      function (error, results, fields) {
+      `create table stocks(
+        id uuid not null default uuid_generate_v4() primary key,
+        productsId uuid not null references products(id) on delete cascade,
+        count numeric NOT NULL
+      )`,
+      function (error, results) {
         if (error) {
-          console.log('>>> Error', error)
-          reject(error.stack)
+          console.log('>>> Error', error);
+          reject(error.stack);
         }
-        console.log('table stocks created!')
-        resolve(results)
+        console.log('table stocks created!');
+        resolve();
       }
-    )
-  })
+    );
+  });
 }
 
-module.exports.createStockTable = createStockTable
+module.exports.createStockTable = createStockTable;
