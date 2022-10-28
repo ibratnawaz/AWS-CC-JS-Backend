@@ -1,6 +1,46 @@
 const { Client } = require('pg');
 require('dotenv').config();
 
+async function insertProduct(client, product) {
+  return await new Promise((resolve, reject) => {
+    const { title, description, price, thumbnail, count } = product;
+    client.query(
+      `select * from products where title = '${title}'`,
+      (error, results) => {
+        if (error) {
+          console.log('>>> Error: pre checking before insertion', error);
+          reject(error.stack);
+        }
+        if (!results.rows.length) {
+          client.query(
+            `insert into products (title, description, price, thumbnail) values('${title}', '${description}', '${price}', '${thumbnail}') returning id`,
+            function (error, results) {
+              if (error) {
+                console.log('>>> Error: products table', error);
+                reject(error.stack);
+              }
+              if (results.rows.length > 0) {
+                client.query(
+                  `insert into stocks (productsId, count) values('${results.rows[0].id}', '${count}')`,
+                  function (error) {
+                    if (error) {
+                      console.log('>>> Error: stocks table', error);
+                      reject(error.stack);
+                    }
+                    resolve('product inserted successfully!');
+                  }
+                );
+              }
+            }
+          );
+        } else {
+          resolve();
+        }
+      }
+    );
+  });
+}
+
 module.exports.createProduct = async (event, context) => {
   console.log('Created database client!');
   const client = new Client({
@@ -29,32 +69,11 @@ module.exports.createProduct = async (event, context) => {
     });
 
     console.log('Inserting product...');
-    await new Promise((resolve, reject) => {
-      const { title, description, price, thumbnail, count } = JSON.parse(
-        event.body
-      );
-      client.query(
-        `insert into products (title, description, price, thumbnail) values('${title}', '${description}', '${price}', '${thumbnail}') returning id`,
-        function (error, results) {
-          if (error) {
-            console.log('>>> Error: products table', error);
-            reject(error.stack);
-          }
-          if (results.rows.length > 0) {
-            client.query(
-              `insert into stocks (productsId, count) values('${results.rows[0].id}', '${count}')`,
-              function (error) {
-                if (error) {
-                  console.log('>>> Error: stocks table', error);
-                  reject(error.stack);
-                }
-                resolve('product inserted successfully!');
-              }
-            );
-          }
-        }
-      );
-    });
+    if ('Records' in event) {
+      await insertProduct(client, JSON.parse(event.Records[0].body));
+    } else {
+      await insertProduct(client, JSON.parse(event.body));
+    }
 
     response = {
       statusCode: 200,

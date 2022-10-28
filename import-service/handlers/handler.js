@@ -77,17 +77,19 @@ module.exports = {
       stream
         .createReadStream()
         .pipe(csv())
-        .on('data', (data) => {
-          sqs.sendMessage(
-            {
-              QueueUrl:
-                'https://sqs.ap-south-1.amazonaws.com/087635793636/batch-product-queue',
-              MessageBody: JSON.stringify(data),
-            },
-            (error, data) => {
-              console.log('>>> error=', error, 'data=', data);
-            }
-          );
+        .on('data', async (data) => {
+          const queueURL =
+            'https://sqs.ap-south-1.amazonaws.com/087635793636/batch-product-queue';
+          await sqs
+            .sendMessage(
+              {
+                QueueUrl: queueURL,
+                MessageBody: JSON.stringify(data),
+              },
+              (error, response) =>
+                console.log('>>> Error:', error, 'SQS Response:', response)
+            )
+            .promise();
           console.log('>>> streaming data', data);
         })
         .on('error', (error) => console.log('>>> stream error', error))
@@ -117,8 +119,5 @@ module.exports = {
       ...response,
       headers,
     };
-  },
-  batchProcessing: async (event) => {
-    console.log('>>> data received', JSON.parse(event.Records[0].body));
   },
 };

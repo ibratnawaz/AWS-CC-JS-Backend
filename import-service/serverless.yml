@@ -41,12 +41,3 @@ functions:
           rules:
             - prefix: uploaded/
           existing: true
-  batchProcessing:
-    handler: handlers/handler.batchProcessing
-    events:
-      - sqs:
-          batchSize: 5
-          arn:
-            Fn::GetAtt:
-              - SQSQueue
-              - Arn

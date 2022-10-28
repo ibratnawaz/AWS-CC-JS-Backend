@@ -7,6 +7,10 @@ provider:
   lambdaHashingVersion: 20201221
   region: ap-south-1
   stage: dev
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action: 'sqs:*'
+      Resource: ['arn:aws:sqs:ap-south-1:087635793636:batch-product-queue']
   memorySize: 256
   environment:
     NODE_ENV: ${opt:stage, 'dev'}
@@ -46,6 +50,9 @@ functions:
       - httpApi:
           path: /products/create
           method: post
+      - sqs:
+          batchSize: 5
+          arn: 'arn:aws:sqs:ap-south-1:087635793636:batch-product-queue'
   productById:
     handler: handlers/productById.getProductsById
     events:
