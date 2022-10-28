@@ -1,0 +1,43 @@
+service: import-service
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+  region: ap-south-1
+  stage: dev
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 's3:*'
+      Resource:
+        - 'arn:aws:s3:::aws-uploaded/*'
+    - Effect: 'Allow'
+      Action: 'sqs:*'
+      Resource:
+        - Fn::GetAtt: [SQSQueue, Arn]
+
+resources:
+  Resources:
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: 'batch-product-queue'
+
+functions:
+  uploadExcelFile:
+    handler: handlers/handler.importProductsFile
+    events:
+      - httpApi:
+          path: /import/{filename}
+          method: put
+  parseExcelFile:
+    handler: handlers/handler.importFileParser
+    events:
+      - s3:
+          bucket: aws-uploaded
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+          existing: true
