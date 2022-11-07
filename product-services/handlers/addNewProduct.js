@@ -1,4 +1,5 @@
 const { Client } = require('pg');
+const AWS = require('aws-sdk');
 require('dotenv').config();
 
 async function insertProduct(client, product) {
@@ -71,6 +72,17 @@ module.exports.createProduct = async (event, context) => {
     console.log('Inserting product...');
     if ('Records' in event) {
       await insertProduct(client, JSON.parse(event.Records[0].body));
+      const sns = new AWS.SNS({ region: 'us-east-1' });
+      sns
+        .publish({
+          Message:
+            'Products were inserted successfully by processing the uploaded csv file.',
+          TopicArn: process.env.SNS_ARN,
+        })
+        .promise()
+        .then((error, data) => {
+          console.log(error, data);
+        });
     } else {
       await insertProduct(client, JSON.parse(event.body));
     }

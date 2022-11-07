@@ -7,10 +7,16 @@ provider:
   lambdaHashingVersion: 20201221
   region: ap-south-1
   stage: dev
+  httpApi:
+    cors: true
   iamRoleStatements:
     - Effect: 'Allow'
       Action: 'sqs:*'
       Resource: ['arn:aws:sqs:ap-south-1:087635793636:batch-product-queue']
+    - Effect: 'Allow'
+      Action: 'sns:*'
+      Resource:
+        Ref: SNSTopic
   memorySize: 256
   environment:
     NODE_ENV: ${opt:stage, 'dev'}
@@ -24,6 +30,20 @@ custom:
   DB_USERNAME: postgres
   DB_PASSWORD: admin123
   DB_PORT: 5432
+
+resources:
+  Resources:
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: catalog-process-topic
+    SNSSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: nawazmd0096@gmail.com
+        Protocol: email
+        TopicArn:
+          Ref: SNSTopic
 
 functions:
   createTablesInDB:
