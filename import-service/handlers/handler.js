@@ -9,7 +9,8 @@ module.exports = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true,
     };
-    const fileType = event.headers['content-type'];
+    const fileType =
+      event.headers['content-type'] || event.headers['Content-Type'];
     if (!fileType.includes('csv')) {
       return {
         statusCode: 405,

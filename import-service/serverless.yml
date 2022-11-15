@@ -7,6 +7,8 @@ provider:
   lambdaHashingVersion: 20201221
   region: ap-south-1
   stage: dev
+  apiGateway:
+    minimumCompressionSize: 1024
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
@@ -18,20 +20,52 @@ provider:
       Resource:
         - Fn::GetAtt: [SQSQueue, Arn]
 
+custom:
+  exclude: ['aws-sdk']
+
+package:
+  exclude:
+    - node_modules/aws-sdk/**
+
 resources:
   Resources:
     SQSQueue:
       Type: AWS::SQS::Queue
       Properties:
         QueueName: 'batch-product-queue'
+    GatewayResponseDenied:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+        ResponseType: ACCESS_DENIED
+        RestApiId:
+          Ref: ApiGatewayRestApi
+    GatewayResponseUnauthorized:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Credentials: "'true'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: ApiGatewayRestApi
 
 functions:
   uploadExcelFile:
     handler: handlers/handler.importProductsFile
     events:
-      - httpApi:
+      - http:
           path: /import/{filename}
           method: put
+          cors: true
+          authorizer:
+            name: basicAuthorizerTest
+            arn: arn:aws:lambda:ap-south-1:087635793636:function:authorization-service-dev-basicAuthorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   parseExcelFile:
     handler: handlers/handler.importFileParser
     events:
