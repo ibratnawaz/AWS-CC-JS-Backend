@@ -59,3 +59,15 @@ functions:
       - httpApi:
           path: /products/{id}
           method: get
+  deleteProduct:
+    handler: handlers/removeProduct.deleteProduct
+    events:
+      - httpApi:
+          path: /products/{id}
+          method: delete
+  updateProduct:
+    handler: handlers/updateProduct.updateProduct
+    events:
+      - httpApi:
+          path: /products/{id}
+          method: put
